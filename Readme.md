@@ -38,6 +38,22 @@ Before using the application, ensure that you have the following:
 - A **deployed instance** of the **SimplePasswordManager** smart contract on the Ethereum network.
 
 ---
+
+## Installation
+
+1. **Clone the repository**:
+
+```bash
+git clone https://github.com/yourusername/simple-password-manager.git
+cd simple-password-manager
+```
+
+2. **Install dependencies**:
+   - You can use the provided HTML file with no need for additional installation steps.
+   - Simply open `index.html` in your browser to start using the dApp.
+
+---
+
 ## Frontend Code
 
 The frontend is a simple **HTML** page with embedded **JavaScript** that interacts with the **SimplePasswordManager** contract.
@@ -256,9 +272,7 @@ Here is an overview of the key components:
 
 ### Smart Contract Address
 
-Replace `0xec7ececda26bc4ffa2c22ffc8002c5ea6434a91a` in the frontend code with the deployed contract address.
-![{2047553C-094C-4FCD-934C-9B5CB50D7C56}](https://github.com/user-attachments/assets/9e3cd8c0-3a23-4bb0-9fe8-965e63865fc5)
-
+Replace `YOUR_CONTRACT_ADDRESS` in the frontend code with the deployed contract address.
 
 ---
 
