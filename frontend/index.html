@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple Password Manager</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+      }
+
+      h1 {
+        text-align: center;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f4f4f4;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .input-group {
+        margin-bottom: 15px;
+      }
+
+      input[type="text"],
+      input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+
+      button {
+        width: 100%;
+        padding: 10px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+
+      .output {
+        margin-top: 20px;
+        font-weight: bold;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Simple Password Manager</h1>
+
+    <div class="container">
+      <div class="input-group">
+        <label for="serviceName">Service Name</label>
+        <input
+          type="text"
+          id="serviceName"
+          placeholder="Enter service name (e.g., Gmail)"
+        />
+      </div>
+
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter password" />
+      </div>
+
+      <button id="storePasswordBtn">Store Password</button>
+
+      <div class="input-group">
+        <button id="getPasswordBtn">Get Password</button>
+      </div>
+
+      <div class="output" id="outputMessage"></div>
+    </div>
+
+    <script>
+      let web3;
+      let contract;
+      let userAccount;
+
+      const contractAddress = "0x5bE5439F433bC1054b1c10D8C9390156469e476d";
+      const contractABI = [
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "string",
+              name: "serviceName",
+              type: "string",
+            },
+          ],
+          name: "PasswordStored",
+          type: "event",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "serviceName",
+              type: "string",
+            },
+          ],
+          name: "getPassword",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "serviceName",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "password",
+              type: "string",
+            },
+          ],
+          name: "storePassword",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+      ];
+
+      async function initWeb3() {
+        if (window.ethereum) {
+          web3 = new Web3(window.ethereum);
+          await window.ethereum.enable(); // Request access to the user's wallet
+          userAccount = (await web3.eth.getAccounts())[0]; // Get the user's first account
+          contract = new web3.eth.Contract(contractABI, contractAddress); // Create contract instance
+          console.log("Web3 initialized with account:", userAccount);
+        } else {
+          alert("Please install MetaMask to use this application.");
+        }
+      }
+
+      // Store password function
+      async function storePassword() {
+        const serviceName = document.getElementById("serviceName").value;
+        const password = document.getElementById("password").value;
+
+        if (!serviceName || !password) {
+          document.getElementById("outputMessage").innerText =
+            "Please fill out both fields.";
+          return;
+        }
+
+        try {
+          await contract.methods
+            .storePassword(serviceName, password)
+            .send({ from: userAccount });
+          document.getElementById(
+            "outputMessage"
+          ).innerText = `Password for ${serviceName} stored successfully.`;
+        } catch (error) {
+          document.getElementById("outputMessage").innerText =
+            "Error storing password: " + error.message;
+        }
+      }
+
+      // Get password function
+      async function getPassword() {
+        const serviceName = document.getElementById("serviceName").value;
+
+        if (!serviceName) {
+          document.getElementById("outputMessage").innerText =
+            "Please enter a service name.";
+          return;
+        }
+
+        try {
+          const password = await contract.methods
+            .getPassword(serviceName)
+            .call({ from: userAccount });
+          document.getElementById(
+            "outputMessage"
+          ).innerText = `Password for ${serviceName}: ${password}`;
+        } catch (error) {
+          document.getElementById("outputMessage").innerText =
+            "Error retrieving password: " + error.message;
+        }
+      }
+
+      // Button event listeners
+      document
+        .getElementById("storePasswordBtn")
+        .addEventListener("click", storePassword);
+      document
+        .getElementById("getPasswordBtn")
+        .addEventListener("click", getPassword);
+
+      // Initialize Web3 when the page loads
+      window.onload = initWeb3;
+    </script>
+  </body>
+</html>
