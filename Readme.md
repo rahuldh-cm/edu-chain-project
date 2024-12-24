@@ -1,7 +1,3 @@
-Sure! Below is a README file for the **Simple Password Manager** project based on the Solidity smart contract you provided:
-
----
-
 # Simple Password Manager
 
 ## Overview
@@ -42,22 +38,6 @@ Before using the application, ensure that you have the following:
 - A **deployed instance** of the **SimplePasswordManager** smart contract on the Ethereum network.
 
 ---
-
-## Installation
-
-1. **Clone the repository**:
-
-```bash
-git clone https://github.com/yourusername/simple-password-manager.git
-cd simple-password-manager
-```
-
-2. **Install dependencies**:
-   - You can use the provided HTML file with no need for additional installation steps.
-   - Simply open `index.html` in your browser to start using the dApp.
-
----
-
 ## Frontend Code
 
 The frontend is a simple **HTML** page with embedded **JavaScript** that interacts with the **SimplePasswordManager** contract.
